@@ -15,6 +15,14 @@ git clone https://github.com/SwiftAndroid/libiconv-libicu-android.git
 cd libiconv-libicu-android
 ./build.sh
 
+echo --- update cmake
+wget https://cmake.org/files/v3.4/cmake-3.4.3.tar.gz
+tar -xzvf cmake-3.4.3.tar.gz
+cd cmake-3.4.3/
+./configure --prefix=/usr/local
+make
+sudo make install
+
 echo --- get swift sources
 git clone https://github.com/apple/swift.git
 ./swift/utils/update-checkout --clone --branch swift-3.0-branch
@@ -25,10 +33,10 @@ echo --- build swift-android toolchain
     --android \
     --android-ndk $ANDROID_NDK_HOME \
     --android-api-level 21 \
-    --android-icu-uc /path/to/libicu-android/armeabi-v7a \
-    --android-icu-uc-include /path/to/libicu-android/armeabi-v7a/icu/source/common \
-    --android-icu-i18n /path/to/libicu-android/armeabi-v7a \
-    --android-icu-i18n-include /path/to/libicu-android/armeabi-v7a/icu/source/i18n/
+    --android-icu-uc           $HOME/libiconv-libicu-android/armeabi-v7a \
+    --android-icu-uc-include   $HOME/libiconv-libicu-android/armeabi-v7a/icu/source/common \
+    --android-icu-i18n         $HOME/libiconv-libicu-android/armeabi-v7a \
+    --android-icu-i18n-include $HOME/libiconv-libicu-android/armeabi-v7a/icu/source/i18n/
 
 echo --- copy to host
 cp -r build/outputs/apk/ /vagrant
