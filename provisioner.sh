@@ -2,45 +2,33 @@
 
 echo --- initial setup
 sudo apt-get update
-sudo apt-get install -y android-tools-adb
+sudo apt-get install -y curl autoconf automake libtool git cmake ninja-build clang python uuid-dev libicu-dev icu-devtools libbsd-dev libedit-dev libxml2-dev libsqlite3-dev swig libpython-dev libncurses5-dev pkg-config libblocksruntime-dev libcurl4-openssl-dev
 
 echo --- install NDK
-curl -LOs http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
-chmod a+x android-ndk-r10e-linux-x86_64.bin
-./android-ndk-r10e-linux-x86_64.bin > /dev/null
-export ANDROID_NDK_HOME=$HOME/android-ndk-r10e
+curl -LOs https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
+unzip android-ndk-r13b-linux-x86_64.zip
+export ANDROID_NDK_HOME=$HOME/android-ndk-r13b
+export PATH=$HOME/android-ndk-r13b/:$PATH
 
-echo --- install SwiftAndroid
-curl -LOs https://github.com/SwiftAndroid/swift/releases/download/swiftandroid-2016-01-06/swift_android_2016-01-06.tar.xz
-tar xf swift_android_2016-01-06.tar.xz
-export PATH=$HOME/swiftandroid/bin:$PATH
+echo --- build libiconv and libicu
+git clone https://github.com/SwiftAndroid/libiconv-libicu-android.git
+cd libiconv-libicu-android
+./build.sh
 
-echo --- test compile
-echo 'print("Hello world!")' > hello.swift
-swiftc-android hello.swift
-file hello
+echo --- get swift sources
+git clone https://github.com/apple/swift.git
+./swift/utils/update-checkout --clone --branch swift-3.0-branch
 
-echo --- install JDK
-sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo apt-get install -y libncurses5:i386 libstdc++6:i386 zlib1g:i386
-sudo apt-get install -y openjdk-7-jdk
-
-echo --- install Android SDK
-curl -LOs http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-tar xf android-sdk_r24.4.1-linux.tgz
-export ANDROID_HOME=$HOME/android-sdk-linux
-echo "y" | $ANDROID_HOME/tools/android update sdk --no-ui --all --filter platform-tools,tools,android-23,build-tools-23.0.2
-
-echo --- install Gradle
-sudo apt-get install -y git clang
-git clone https://github.com/SwiftAndroid/swift-android-gradle.git
-(cd swift-android-gradle && ./gradlew install)
-
-echo --- compile Sample App
-git clone https://github.com/SwiftAndroid/swift-android-samples.git
-cd swift-android-samples/swifthello
-./gradlew build
+echo --- build swift-android toolchain
+./swift/utils/build-script \
+    -R \
+    --android \
+    --android-ndk $ANDROID_NDK_HOME \
+    --android-api-level 21 \
+    --android-icu-uc /path/to/libicu-android/armeabi-v7a \
+    --android-icu-uc-include /path/to/libicu-android/armeabi-v7a/icu/source/common \
+    --android-icu-i18n /path/to/libicu-android/armeabi-v7a \
+    --android-icu-i18n-include /path/to/libicu-android/armeabi-v7a/icu/source/i18n/
 
 echo --- copy to host
 cp -r build/outputs/apk/ /vagrant
