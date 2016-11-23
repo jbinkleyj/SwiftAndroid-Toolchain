@@ -14,6 +14,7 @@ echo --- build libiconv and libicu
 git clone https://github.com/SwiftAndroid/libiconv-libicu-android.git
 cd libiconv-libicu-android
 ./build.sh
+cd 
 
 echo --- update cmake
 wget https://cmake.org/files/v3.4/cmake-3.4.3.tar.gz
@@ -22,10 +23,11 @@ cd cmake-3.4.3/
 ./configure --prefix=/usr/local
 make
 sudo make install
+cd
 
 echo --- get swift sources
 git clone https://github.com/apple/swift.git
-./swift/utils/update-checkout --clone --branch swift-3.0-branch
+./swift/utils/update-checkout --clone 
 
 echo --- build swift-android toolchain
 ./swift/utils/build-script \
