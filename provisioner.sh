@@ -26,6 +26,8 @@ sudo make install
 cd
 
 echo --- get swift sources
+mkdir swift
+cd swift
 git clone https://github.com/apple/swift.git
 ./swift/utils/update-checkout --clone 
 
@@ -38,7 +40,27 @@ echo --- build swift-android toolchain
     --android-icu-uc           $HOME/libiconv-libicu-android/armeabi-v7a \
     --android-icu-uc-include   $HOME/libiconv-libicu-android/armeabi-v7a/icu/source/common \
     --android-icu-i18n         $HOME/libiconv-libicu-android/armeabi-v7a \
-    --android-icu-i18n-include $HOME/libiconv-libicu-android/armeabi-v7a/icu/source/i18n/
+    --android-icu-i18n-include $HOME/libiconv-libicu-android/armeabi-v7a/icu/source/i18n/ \
+    --foundation \
+    --llbuild \
+    --lldb \
+    --xctest \
+    --swiftpm \
+    -- \
+    --install-libdispatch \
+    --install-swift \
+    --install-lldb \
+    --install-llbuild \
+    --install-foundation \
+    --install-swiftpm \
+    --install-xctest \
+    --install-prefix=/usr \
+    '--swift-install-components=autolink-driver;compiler;clang-builtin-headers;stdlib;swift-remote-mirror;sdk-overlay;dev' \
+    --build-swift-static-stdlib \
+    --build-swift-static-sdk-overlay \
+    --install-destdir=$HOME/swift-install \
+    --installable-package=$HOME/SwiftAndroid.tar.gz 
+cd
 
 echo --- copy to host
 cp -r build/outputs/apk/ /vagrant
