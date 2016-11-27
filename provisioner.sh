@@ -62,8 +62,22 @@ echo --- build swift-android toolchain
     --installable-package=$HOME/SwiftAndroid.tar.gz 
 cd
 
-echo --- copy to host
-cp -r build/outputs/apk/ /vagrant
+echo --- Make a test swift program
+echo "print(\"Hello Android!\")" > hello.swift
+
+echo --- Link android gold into /usr/bin
+sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/armv7-none-linux-androideabi-ld.gold
+
+echo --- Build sample program
+./swift/build/Ninja-ReleaseAssert/swift-linux-x86_64/bin/swiftc \
+    -target armv7-none-linux-androideabi \
+    -sdk $ANDROID_NDK_HOME/platforms/android-21/arch-arm \
+    -L   $ANDROID_NDK_HOME/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a \
+    -L   $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9 \
+    hello.swift
+
+echo --- copy toolchain to host
+cp -r SwiftAndroid.tar.gz /vagrant
 
 cd $HOME
-rm -f ./android-ndk-r10e-linux-x86_64.bin ./android-sdk_r24.4.1-linux.tgz
+rm -rf android-ndk-r13b-linux-x86_64.zip 
