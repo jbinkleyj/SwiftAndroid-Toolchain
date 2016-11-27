@@ -68,12 +68,16 @@ echo "print(\"Hello Android!\")" > hello.swift
 echo --- Link android gold into /usr/bin
 sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/armv7-none-linux-androideabi-ld.gold
 
+echo --- Hack around swiftc not finding the right linker \(temporary\)
+sudo mv /usr/bin/ld.gold /usr/bin/ld.gold-orig
+sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/ld.gold
+
 echo --- Build sample program
 ./swift/build/Ninja-ReleaseAssert/swift-linux-x86_64/bin/swiftc \
     -target armv7-none-linux-androideabi \
     -sdk $ANDROID_NDK_HOME/platforms/android-21/arch-arm \
     -L   $ANDROID_NDK_HOME/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a \
-    -L   $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9 \
+    -L   ./android-ndk-r13b/toolchains/x86_64-4.9/prebuilt/linux-x86_64/lib/gcc/x86_64-linux-android/4.9.x/ \
     hello.swift
 
 echo --- copy toolchain to host
