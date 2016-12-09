@@ -31,6 +31,12 @@ cd swift
 git clone https://github.com/apple/swift.git
 ./swift/utils/update-checkout --clone 
 
+echo --- Applying clang patch
+cd swift
+patch -p1 < /vagrant/swift.patch
+cd ..
+
+
 echo --- build swift-android toolchain
 ./swift/utils/build-script \
     -R \
