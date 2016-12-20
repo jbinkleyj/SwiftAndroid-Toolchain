@@ -72,11 +72,8 @@ echo --- Make a test swift program
 echo "print(\"Hello Android!\")" > hello.swift
 
 echo --- Link android gold into /usr/bin
+sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/armv7-none-linux-android-ld.gold
 sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/armv7-none-linux-androideabi-ld.gold
-
-echo --- Hack around swiftc not finding the right linker \(temporary\)
-sudo mv /usr/bin/ld.gold /usr/bin/ld.gold-orig
-sudo ln -s $ANDROID_NDK_HOME/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/arm-linux-androideabi/bin/ld.gold /usr/bin/ld.gold
 
 echo --- Build sample program
 ./swift/build/Ninja-ReleaseAssert/swift-linux-x86_64/bin/swiftc \
